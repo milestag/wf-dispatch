@@ -1,0 +1,33 @@
+name: Manual Jobs Workflow
+
+on:
+  workflow_dispatch:
+    inputs:
+      runJob1:
+        description: 'Run Job1 (true/false)'
+        required: true
+        default: 'false'
+      runJob2:
+        description: 'Run Job2 (true/false)'
+        required: true
+        default: 'false'
+
+jobs:
+  Job1:
+    runs-on: ubuntu-latest
+    if: ${{ github.event.inputs.runJob1 == 'true' }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      - name: Run Job1
+        run: echo "Running Job1"
+
+  Job2:
+    runs-on: ubuntu-latest
+    needs: Job1
+    if: ${{ github.event.inputs.runJob2 == 'true' && github.event.inputs.runJob1 == 'false' }} || ${{ github.event.inputs.runJob2 == 'true' }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      - name: Run Job2
+        run: echo "Running Job2"
